@@ -36,7 +36,7 @@ var greyT = "#ffffff"
 var guiState = "open";
 var theme = "dark";
 var page = "utilities";
-var lastUpdated = "5/9/24"
+var lastUpdated = "5/12/24"
 //gui width and height
 var guiW = "370px"
 var guiH = "250px"
@@ -126,6 +126,101 @@ gui.addEventListener("mousedown", startDragging);
 gui.addEventListener("touchstart", startDragging);
 
 
+ var sidebar = document.createElement("div")
+ sidebar.style.width = "160px"
+ sidebar.style.height = guiH;
+ sidebar.style.backgroundColor = grey;
+ sidebar.style.border = "none"
+ sidebar.style.position = "absolute"
+ sidebar.style.top = "0px"
+ sidebar.style.left = "400px"
+ sidebar.style.borderRadius = "20px"
+ gui.appendChild(sidebar)
+
+ mini = document.createElement("div")
+ mini.style.width = "160px"
+ mini.style.height = "40px"
+ mini.style.backgroundColor = "#3b3f45"
+ mini.style.border = "none"
+   mini.style.position = "absolute";
+ mini.style.top = "0px";
+ mini.style.left = "0px";
+ mini.style.borderRadius = "20px 20px 0px 0px";
+ sidebar.appendChild(mini)
+
+ var miniT = document.createElement("p")
+ miniT.style.width = "160px"
+ miniT.style.height = "20px"
+ miniT.style.color = "white"
+ miniT.style.position = "absolute"
+ miniT.style.top = "-5px"
+ miniT.style.left = "0px"
+ miniT.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"></path></svg>'
+ miniT.style.fontFamily = "sans-serif"
+ miniT.style.textAlign = "center"
+ miniT.style.fontSize = "12px"
+ sidebar.appendChild(miniT)
+
+ //status
+ var status2 = document.createElement("p")
+ status2.innerHTML = "Status:"
+ status2.style.width = "160px"
+ status2.style.fontFamily = "sans-serif"
+ status2.style.color = "black"
+ status2.style.position = "absolute"
+ status2.style.top = "40px"
+ status2.style.left = "7px"
+ status2.style.fontSize = "12px"
+ status2.style.color = "white"
+ sidebar.appendChild(status2)
+
+ var status3 = document.createElement("p")
+ status3.innerHTML = "Undetected"
+ status3.style.width = "10px"
+ status3.style.fontFamily = "sans-serif"
+ status3.style.color = "green"
+ status3.style.position = "absolute"
+ status3.style.top = "40px"
+ status3.style.left = "55px"
+ status3.style.fontSize = "12px"
+ status3.style.fontWeight = "bold"
+ sidebar.appendChild(status3)
+
+ var last = document.createElement("p")
+ last.innerHTML = "Last Updated: " + lastUpdated;
+ last.style.width = "160px"
+ last.style.fontFamily = "sans-serif"
+ last.style.fontSize = "12px"
+ last.style.color = "white"
+ last.style.position = "absolute"
+ last.style.top = "60px"
+ last.style.left = "7px"
+ last.style.whiteSpace = "nowrap"
+ sidebar.appendChild(last)
+
+ var credit = document.createElement("p")
+ credit.innerHTML = "Made by: ShinyThunder"
+ credit.style.width = "160px"
+ credit.style.fontFamily = "sans-serif"
+ credit.style.fontSize = "12px"
+ credit.style.color = "white"
+ credit.style.position = "absolute"
+ credit.style.top = "80px"
+ credit.style.left = "7px"
+ credit.style.whiteSpace = "nowrap"
+ sidebar.appendChild(credit)
+
+var guessCount = document.createElement("p")
+guessCount.innerHTML = "Guess Count: " + guessT;
+guessCount.style.width = "160px"
+guessCount.style.fontFamily = "sans-serif"
+guessCount.style.fontSize = "12px"
+guessCount.style.color = "white"
+guessCount.style.position = "absolute"
+guessCount.style.top = "100px"
+guessCount.style.left = "7px"
+sidebar.appendChild(guessCount)
+    
 
 //bar
 bar = document.createElement("div")
@@ -149,7 +244,6 @@ function generateRandomId() {
 function guessCode() {
   let guesses = 0;
   let sleep = 0;
-  let display = document.querySelector("div[class*='titleText']");
 
   function reactHandler() {
     return Object.values(
@@ -175,7 +269,7 @@ function guessCode() {
       .then(data => {
         if (data.success === true) {
           console.log("Game found:", randomId);
-          display.innerHTML = `Code: ${randomId}`;
+          guessCount.innerHTML = `Code: ${randomId}`;
           const handler = reactHandler();
           if (handler) {
             handler.setState({ client: { hostId: randomId.toString() } });
@@ -183,7 +277,7 @@ function guessCode() {
           }
         } else {
           guesses++;
-          display.innerHTML = `Guesses: ${guesses}`; // Show the guess counter
+              guessCount.innerHTML = `Guesses: ${guesses}`;
           sleep++;
 
           if (sleep > 15) {
@@ -198,7 +292,7 @@ function guessCode() {
       })
       .catch(error => {
         console.error("Error:", error);
-        display.innerHTML = `Error: ${error.message}`; // Display error message
+        guessCount.innerHTML = `Error: ${error.message}`; // Display error message
       });
   }
 
@@ -208,14 +302,13 @@ function guessCode() {
 
 // Function to toggle the guessing process
 function toggleGuessCode() {
-  const display = document.querySelector("div[class*='titleText']");
   isGuessingActive = !isGuessingActive; // Toggle guessing on/off
 
   if (isGuessingActive) {
-    display.innerHTML = "Guessing started...";
+    guessCount.innerHTML = "Guessing started...";
     guessCode(); // Start guessing if toggled on
   } else {
-    display.innerHTML = "Blooket"; // Indicate guessing stopped
+      guessCount.innerHTML = "Guess Count: " + guessT;
   }
 }
 
@@ -886,89 +979,7 @@ var crypto = document.createElement("button")
 
 
 //settings
-var sidebar = document.createElement("div")
-sidebar.style.width = "160px"
-sidebar.style.height = guiH;
-sidebar.style.backgroundColor = grey;
-sidebar.style.border = "none"
-sidebar.style.position = "absolute"
-sidebar.style.top = "0px"
-sidebar.style.left = "400px"
-sidebar.style.borderRadius = "20px"
-gui.appendChild(sidebar)
 
-mini = document.createElement("div")
-mini.style.width = "160px"
-mini.style.height = "40px"
-mini.style.backgroundColor = "#3b3f45"
-mini.style.border = "none"
-  mini.style.position = "absolute";
-mini.style.top = "0px";
-mini.style.left = "0px";
-mini.style.borderRadius = "20px 20px 0px 0px";
-sidebar.appendChild(mini)
-
-var miniT = document.createElement("p")
-miniT.style.width = "160px"
-miniT.style.height = "20px"
-miniT.style.color = "white"
-miniT.style.position = "absolute"
-miniT.style.top = "-5px"
-miniT.style.left = "0px"
-miniT.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"></path></svg>'
-miniT.style.fontFamily = "sans-serif"
-miniT.style.textAlign = "center"
-miniT.style.fontSize = "12px"
-sidebar.appendChild(miniT)
-
-//status
-var status2 = document.createElement("p")
-status2.innerHTML = "Status:"
-status2.style.width = "160px"
-status2.style.fontFamily = "sans-serif"
-status2.style.color = "black"
-status2.style.position = "absolute"
-status2.style.top = "40px"
-status2.style.left = "7px"
-status2.style.fontSize = "12px"
-status2.style.color = "white"
-sidebar.appendChild(status2)
-
-var status3 = document.createElement("p")
-status3.innerHTML = "Undetected"
-status3.style.width = "10px"
-status3.style.fontFamily = "sans-serif"
-status3.style.color = "green"
-status3.style.position = "absolute"
-status3.style.top = "40px"
-status3.style.left = "55px"
-status3.style.fontSize = "12px"
-status3.style.fontWeight = "bold"
-sidebar.appendChild(status3)
-
-var last = document.createElement("p")
-last.innerHTML = "Last Updated: " + lastUpdated;
-last.style.width = "160px"
-last.style.fontFamily = "sans-serif"
-last.style.fontSize = "12px"
-last.style.color = "white"
-last.style.position = "absolute"
-last.style.top = "60px"
-last.style.left = "7px"
-last.style.whiteSpace = "nowrap"
-sidebar.appendChild(last)
-
-var credit = document.createElement("p")
-credit.innerHTML = "Made by: ShinyThunder"
-credit.style.width = "160px"
-credit.style.fontFamily = "sans-serif"
-credit.style.fontSize = "12px"
-credit.style.color = "white"
-credit.style.position = "absolute"
-credit.style.top = "80px"
-credit.style.left = "7px"
-credit.style.whiteSpace = "nowrap"
-sidebar.appendChild(credit)
 
 
 
